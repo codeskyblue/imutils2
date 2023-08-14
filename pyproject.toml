@@ -15,7 +15,8 @@ opencv-python = "*"
 matplotlib = "*"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "*"
+pytest = "^7.2.0"
+pytest-cov = "^2"
 
 [tool.poetry-dynamic-versioning] # 根据tag来动态配置版本号
 enable = true
