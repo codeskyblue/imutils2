@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "imutils2"
+version = "0.1.0"
+description = "image utils"
+authors = ["Sully <codeskyblue@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+numpy = "*"
+Pillow = "*"
+typeguard = "*"
+opencv-python = "*"
+matplotlib = "*"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "*"
+
+[tool.poetry-dynamic-versioning] # 根据tag来动态配置版本号
+enable = true
+
+# 需要将原本的build-system替换掉
+[build-system]
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
+build-backend = "poetry_dynamic_versioning.backend"
