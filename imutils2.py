@@ -1,6 +1,8 @@
 # coding: utf-8
 #
 
+import base64
+import pathlib
 import re
 import typing
 import numpy as np
@@ -10,6 +12,52 @@ from typeguard import typechecked
 import matplotlib.pyplot as plt
 import urllib.request
 
+
+def imread(data: typing.Union[str, pathlib.Path, bytes, Image.Image, np.ndarray]) -> np.ndarray:
+    """ convert any data to opencv type
+    Support:
+    - url: https://www.baidu.com/baidu.png
+    - base64: data:image,xlkj1jf=/
+    - pathlib.Path("./test.jpg")
+    - binary data: b'xlkeRGBxls...'
+    - Image.Image
+
+    if param is opencv data, then return it without modify
+    """
+    if isinstance(data, str):
+        if re.match(r"https?://", data):
+            url = data
+            with urllib.request.urlopen(url) as url_response:
+                img_pil = Image.open(url_response)
+                return imread(img_pil)
+        elif data.startswith("data:image"):
+            binary_data = base64.b64decode(data.split(",")[1])
+            return imread(binary_data)
+        else:
+            binary_data = base64.b64decode(data)
+            return imread(binary_data)
+    elif isinstance(data, Image.Image):
+        return pil2cv(data)
+    elif isinstance(data, pathlib.Path):
+        im = cv2.imread(str(data))
+        if im is None:
+            raise ValueError("Invalid image path", data)
+        return im
+    elif isinstance(data, (bytes, bytearray)):
+        img_bytes = np.asarray(bytearray(data), dtype=np.uint8)
+        im = cv2.imdecode(img_bytes, cv2.IMREAD_UNCHANGED)
+        if im is None:
+            raise ValueError("Invalid image url", url)
+        if len(im.shape) == 3 and im.shape[2] == 4:
+            # convert rgba to rgb
+            im = cv2.cvtColor(im, cv2.COLOR_RGBA2RGB)
+        return im
+    elif isinstance(data, np.ndarray):
+        return data
+    else:
+        raise ValueError(f"Unknown data type: {type(data)}")
+        
+        
 
 @typechecked
 def pil2cv(pil_image: Image.Image) -> np.ndarray:
@@ -53,16 +101,4 @@ def show_image(images: typing.List[np.ndarray]):
 
 
 def url_to_image(url: str) -> np.ndarray:
-    assert re.match(r"https?://", url), url
-    with urllib.request.urlopen(url) as url_response:
-        img_pil = Image.open(url_response).convert("RGB")
-    # convert PIL image to OpenCV image
-    img_cv = np.array(img_pil)
-    img_cv = cv2.cvtColor(img_cv, cv2.COLOR_RGB2BGR)
-
-    #binary_data = get_url_content(url)
-    #img_bytes = np.asarray(bytearray(binary_data), dtype=np.uint8)
-    #im = cv2.imdecode(img_bytes, cv2.IMREAD_COLOR)
-    if img_cv is None:
-        raise ValueError("Invalid image url", url)
-    return img_cv
+    return imread(url)
