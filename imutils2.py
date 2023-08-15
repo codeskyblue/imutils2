@@ -5,13 +5,13 @@ import base64
 import pathlib
 import re
 import typing
-import numpy as np
-import cv2
-from PIL import Image
-from typeguard import typechecked
-import matplotlib.pyplot as plt
 import urllib.request
 
+import cv2
+import matplotlib.pyplot as plt
+import numpy as np
+from PIL import Image
+from typeguard import typechecked
 
 AnyImage = typing.Union[str, pathlib.Path, bytes, Image.Image, np.ndarray]
 
@@ -48,7 +48,7 @@ def imread(data: AnyImage) -> np.ndarray:
         img_bytes = np.asarray(bytearray(data), dtype=np.uint8)
         im = cv2.imdecode(img_bytes, cv2.IMREAD_UNCHANGED)
         if im is None:
-            raise ValueError("Invalid image url", url)
+            raise ValueError("Invalid image data", data)
         if len(im.shape) == 3 and im.shape[2] == 4:
             # convert rgba to rgb
             # 创建一个白色的画布，然后把非透明的部分画上去
@@ -89,9 +89,9 @@ def cv2gray(cv_img: np.ndarray) -> np.ndarray:
     return cv2.cvtColor(cv_img, cv2.COLOR_BGR2GRAY)
 
 
-def show_image(images: typing.List[AnyImage]):
+def show_image(images: typing.Union[AnyImage, typing.List[AnyImage]]): # pragma: no cover
     """ Show image in jupyter """
-    if not isinstance(images, list):
+    if not isinstance(images, (list, tuple)):
         images = [images]
 
     # load image using cv2....and do processing.

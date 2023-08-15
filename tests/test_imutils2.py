@@ -3,6 +3,7 @@
 
 import base64
 import pathlib
+import pytest
 
 import cv2
 import numpy as np
@@ -67,8 +68,12 @@ def test_imread(httpserver: HTTPServer):
         base64.b64encode(imagedata).decode("utf-8"),
         pathlib.Path("./tests/testdata/pyimagesearch.png"),
         cv2.imread("./tests/testdata/pyimagesearch.png"),
+        Image.open("./tests/testdata/pyimagesearch.png"),
     ]:
         im = imread(data)
         check_image(im)
     
-
+    for invalid_data in (b'xxxx', None, 1, 'xxxx'):
+        with pytest.raises(ValueError):
+            imread(invalid_data)
+    
