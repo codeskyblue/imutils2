@@ -10,7 +10,7 @@ import numpy as np
 from PIL import Image
 from pytest_httpserver import HTTPServer
 
-from imutils2 import cv2gray, cv2pil, imread, pil2cv, url_to_image
+from imutils2 import cv2bytes, cv2gray, cv2pil, imread, pil2cv, url_to_image
 
 
 def test_pil2cv():
@@ -40,14 +40,38 @@ def test_cv2gray():
     assert len(gray_img.shape) == 2
 
 
-def test_url_to_image():
-    url = "https://pyimagesearch.com/wp-content/themes/pyi/assets/images/logo.png"
+def test_cv2bytes():
+    cv_img = np.zeros((100, 100, 3), dtype=np.uint8)
+    bytes_img = cv2bytes(cv_img)
+    assert isinstance(bytes_img, bytes)
+    
+    img2 = imread(bytes_img)
+    assert isinstance(img2, np.ndarray)
+    assert img2.shape == cv_img.shape
+
+    
+def test_url_to_image(httpserver: HTTPServer):
+    imagedata = pathlib.Path("./tests/testdata/pyimagesearch.png").read_bytes()
+    httpserver.expect_oneshot_request("/test.png").respond_with_data(imagedata)
+
+    url = httpserver.url_for("/test.png")
     img = url_to_image(url)
     assert isinstance(img, np.ndarray)
     assert len(img.shape) == 3
     assert img.shape[2] == 3
     assert img.shape[0] > 0
     assert img.shape[1] > 0
+
+    img2 = url_to_image(url)
+    assert isinstance(img2, np.ndarray)
+    assert len(img2.shape) == 3
+    assert img2.shape[2] == 3
+    assert img2.shape[0] > 0
+    assert img2.shape[1] > 0
+
+    with pytest.raises(ValueError):
+        im3 = url_to_image(url, cached=False)
+        assert len(img2.shape) == 3
 
 
 def test_imread(httpserver: HTTPServer):

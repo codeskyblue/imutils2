@@ -2,10 +2,12 @@
 #
 
 import base64
+import functools
 import pathlib
 import re
 import typing
 import urllib.request
+import urllib.error
 
 import cv2
 import matplotlib.pyplot as plt
@@ -16,7 +18,10 @@ from typeguard import typechecked
 AnyImage = typing.Union[str, pathlib.Path, bytes, Image.Image, np.ndarray]
 
 def imread(data: AnyImage) -> np.ndarray:
-    """ convert any data to opencv type
+    """ convert any data to opencv type (gray or rgb)
+
+    RGBA will convert to RGB, Alpha part will fill with white
+
     Support:
     - url: https://www.baidu.com/baidu.png
     - base64: data:image,xlkj1jf=/
@@ -29,8 +34,11 @@ def imread(data: AnyImage) -> np.ndarray:
     if isinstance(data, str):
         if re.match(r"https?://", data):
             url = data
-            with urllib.request.urlopen(url) as url_response:
-                return imread(url_response.read())
+            try:
+                with urllib.request.urlopen(url) as url_response:
+                    return imread(url_response.read())
+            except urllib.error.HTTPError as e:
+                raise ValueError("Invalid image url", url) from e
         elif data.startswith("data:image"):
             binary_data = base64.b64decode(data.split(",")[1])
             return imread(binary_data)
@@ -89,6 +97,11 @@ def cv2gray(cv_img: np.ndarray) -> np.ndarray:
     return cv2.cvtColor(cv_img, cv2.COLOR_BGR2GRAY)
 
 
+def cv2bytes(cv2_image: np.ndarray, format="jpg") -> bytes:
+    """ convert cv2 image to bytes """
+    return cv2.imencode("."+format.lower(), cv2_image)[1].tobytes()
+
+
 def show_image(images: typing.Union[AnyImage, typing.List[AnyImage]]): # pragma: no cover
     """ Show image in jupyter """
     if not isinstance(images, (list, tuple)):
@@ -104,5 +117,15 @@ def show_image(images: typing.Union[AnyImage, typing.List[AnyImage]]): # pragma:
     plt.show()
 
 
-def url_to_image(url: str) -> np.ndarray:
+def url_to_image(url: str, cached: bool = True) -> np.ndarray:
+    """ download image from url and convert to opencv image"""
+    if not cached:
+        return imread(url)
+    else:
+        im = _cache_imread(url)
+        return im.copy()
+
+
+@functools.lru_cache(maxsize=32)
+def _cache_imread(url: str) -> np.ndarray:
     return imread(url)
