@@ -97,7 +97,7 @@ def test_imread(httpserver: HTTPServer):
         im = imread(data)
         check_image(im)
     
-    for invalid_data in (b'xxxx', None, 1, 'xxxx'):
+    for invalid_data in (b'xxxx', None, 1, 'xxxx', pathlib.Path("./xxxx.jpg")):
         with pytest.raises(ValueError):
             imread(invalid_data)
     
