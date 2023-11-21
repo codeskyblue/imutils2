@@ -102,14 +102,25 @@ def test_imread(httpserver: HTTPServer):
             imread(invalid_data)
     
 
+@pytest.mark.skip("local test")
+def test_merge_app_screenshots2():
+    im1 = pathlib.Path("tmp/a1.jpg")
+    im2 = pathlib.Path("tmp/a2.jpg")
+    im3 = pathlib.Path("tmp/a3.jpg")
+    im5 = pathlib.Path("tmp/a5.jpg")
+    img = merge_app_screenshots([im1, im2, im3, im5, im5], draw_merge_line=True)
+    assert isinstance(img, np.ndarray)
+    cv2pil(img).show()
+
+
 def test_merge_app_screenshots():
     images = [pathlib.Path(f"./tests/testdata/m{i}.jpg") for i in [1,2,3]]
-    img = merge_app_screenshots(images)
+    img = merge_app_screenshots(images, draw_merge_line=True)
     assert isinstance(img, np.ndarray)
     # cv2pil(img).show()
 
     images = [pathlib.Path(f"./tests/testdata/m{i}.jpg") for i in [1,3]]
-    img = merge_app_screenshots(images)
+    img = merge_app_screenshots(images, draw_merge_line=True)
     assert isinstance(img, np.ndarray)
     # cv2pil(img).show()
 
