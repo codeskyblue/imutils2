@@ -129,3 +129,4 @@ def url_to_image(url: str, cached: bool = True) -> np.ndarray:
 @functools.lru_cache(maxsize=32)
 def _cache_imread(url: str) -> np.ndarray:
     return imread(url)
+

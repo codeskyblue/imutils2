@@ -10,7 +10,7 @@ import numpy as np
 from PIL import Image
 from pytest_httpserver import HTTPServer
 
-from imutils2 import cv2bytes, cv2gray, cv2pil, imread, pil2cv, url_to_image
+from imutils2 import cv2bytes, cv2gray, cv2pil, imread, pil2cv, url_to_image, merge_app_screenshots
 
 
 def test_pil2cv():
@@ -101,3 +101,18 @@ def test_imread(httpserver: HTTPServer):
         with pytest.raises(ValueError):
             imread(invalid_data)
     
+
+def test_merge_app_screenshots():
+    images = [pathlib.Path(f"./tests/testdata/m{i}.jpg") for i in [1,2,3]]
+    img = merge_app_screenshots(images)
+    assert isinstance(img, np.ndarray)
+    # cv2pil(img).show()
+
+    images = [pathlib.Path(f"./tests/testdata/m{i}.jpg") for i in [1,3]]
+    img = merge_app_screenshots(images)
+    assert isinstance(img, np.ndarray)
+    # cv2pil(img).show()
+
+    with pytest.raises(ValueError):
+        merge_app_screenshots([pathlib.Path("./tests/testdata/m1.jpg"), pathlib.Path("./tests/testdata/pyimagesearch.png")])
+
