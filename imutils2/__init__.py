@@ -5,6 +5,6 @@
 """
 
 from .core import (
-    imread, cv2pil, pil2cv, cv2gray, cv2bytes, url_to_image, AnyImage
+    imread, cv2pil, pil2cv, cv2gray, cv2bytes, url_to_image, AnyImage, show_image
 )
 from .merge import merge_app_screenshots

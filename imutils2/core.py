@@ -1,5 +1,6 @@
 # coding: utf-8
 #
+from __future__ import annotations
 
 import base64
 import functools
@@ -17,7 +18,7 @@ from typeguard import typechecked
 
 AnyImage = typing.Union[str, pathlib.Path, bytes, Image.Image, np.ndarray]
 
-def imread(data: AnyImage) -> np.ndarray:
+def imread(data: AnyImage, type: str | None = None) -> np.ndarray:
     """ convert any data to opencv type (gray or rgb)
 
     RGBA will convert to RGB, Alpha part will fill with white
@@ -43,8 +44,7 @@ def imread(data: AnyImage) -> np.ndarray:
             binary_data = base64.b64decode(data.split(",")[1])
             return imread(binary_data)
         else:
-            binary_data = base64.b64decode(data)
-            return imread(binary_data)
+            return imread(pathlib.Path(data))
     elif isinstance(data, Image.Image):
         return pil2cv(data)
     elif isinstance(data, pathlib.Path):
@@ -102,7 +102,7 @@ def cv2bytes(cv2_image: np.ndarray, format="jpg") -> bytes:
     return cv2.imencode("."+format.lower(), cv2_image)[1].tobytes()
 
 
-def show_image(images: typing.Union[AnyImage, typing.List[AnyImage]]): # pragma: no cover
+def show_image(images: AnyImage | typing.List[AnyImage]): # pragma: no cover
     """ Show image in jupyter """
     if not isinstance(images, (list, tuple)):
         images = [images]
