@@ -9,7 +9,7 @@
 - cv2pil Opencv转Pillow格式
 - cv2gray Opencv转成灰度图
 - url_to_image 下载URL为图像
-- show_image 查看图像兼容jupyter
+- show_image 查看图像兼容jupyter, requires matplotlib
 - merge_app_screenshots App下滑长截图拼接
 
 ```python

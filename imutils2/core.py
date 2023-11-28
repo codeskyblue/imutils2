@@ -11,7 +11,6 @@ import urllib.request
 import urllib.error
 
 import cv2
-import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 from typeguard import typechecked
@@ -104,6 +103,8 @@ def cv2bytes(cv2_image: np.ndarray, format="jpg") -> bytes:
 
 def show_image(images: AnyImage | typing.List[AnyImage]): # pragma: no cover
     """ Show image in jupyter """
+    import matplotlib.pyplot as plt
+    
     if not isinstance(images, (list, tuple)):
         images = [images]
 
