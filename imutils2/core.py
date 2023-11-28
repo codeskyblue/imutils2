@@ -69,7 +69,7 @@ def imread(data: AnyImage, type: str | None = None) -> np.ndarray:
     elif isinstance(data, np.ndarray):
         return data
     else:
-        raise ValueError(f"Unknown data type: {type(data)}")
+        raise ValueError(f"Unknown data: {data}")
 
 
 @typechecked

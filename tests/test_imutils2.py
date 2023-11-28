@@ -89,7 +89,7 @@ def test_imread(httpserver: HTTPServer):
         imagedata,
         httpserver.url_for("/test.png"),
         "data:image/png;base64," + base64.b64encode(imagedata).decode("utf-8"),
-        base64.b64encode(imagedata).decode("utf-8"),
+        "./tests/testdata/pyimagesearch.png",
         pathlib.Path("./tests/testdata/pyimagesearch.png"),
         cv2.imread("./tests/testdata/pyimagesearch.png"),
         Image.open("./tests/testdata/pyimagesearch.png"),
