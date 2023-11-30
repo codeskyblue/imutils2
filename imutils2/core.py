@@ -7,15 +7,15 @@ import functools
 import pathlib
 import re
 import typing
-import urllib.request
-import urllib.error
 
 import cv2
 import numpy as np
+import requests
 from PIL import Image
 from typeguard import typechecked
 
 AnyImage = typing.Union[str, pathlib.Path, bytes, Image.Image, np.ndarray]
+DEFAULT_REQUEST_TIMEOUT = 30
 
 def imread(data: AnyImage, type: str | None = None) -> np.ndarray:
     """ convert any data to opencv type (gray or rgb)
@@ -35,9 +35,10 @@ def imread(data: AnyImage, type: str | None = None) -> np.ndarray:
         if re.match(r"https?://", data):
             url = data
             try:
-                with urllib.request.urlopen(url) as url_response:
-                    return imread(url_response.read())
-            except urllib.error.HTTPError as e:
+                r = requests.get(url, timeout=DEFAULT_REQUEST_TIMEOUT)
+                r.raise_for_status()
+                return imread(r.content)
+            except requests.RequestException as e:
                 raise ValueError("Invalid image url", url) from e
         elif data.startswith("data:image"):
             binary_data = base64.b64decode(data.split(",")[1])

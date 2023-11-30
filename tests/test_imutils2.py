@@ -77,6 +77,7 @@ def test_url_to_image(httpserver: HTTPServer):
 def test_imread(httpserver: HTTPServer):
     imagedata = pathlib.Path("./tests/testdata/pyimagesearch.png").read_bytes()
     httpserver.expect_request("/test.png").respond_with_data(imagedata)
+    httpserver.expect_request("/test space.png").respond_with_data(imagedata)
 
     def check_image(im):
         assert isinstance(im, np.ndarray)
@@ -88,6 +89,7 @@ def test_imread(httpserver: HTTPServer):
     for data in [
         imagedata,
         httpserver.url_for("/test.png"),
+        httpserver.url_for("/test space.png"),
         "data:image/png;base64," + base64.b64encode(imagedata).decode("utf-8"),
         "./tests/testdata/pyimagesearch.png",
         pathlib.Path("./tests/testdata/pyimagesearch.png"),
