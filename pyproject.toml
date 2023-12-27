@@ -11,8 +11,8 @@ python = "^3.8"
 numpy = "*"
 Pillow = "*"
 typeguard = "*"
-opencv-python = "*"
 requests = "*"
+opencv-python = {version = "*", extras = ["opencv"]}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.2.0"

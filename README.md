@@ -3,6 +3,14 @@
 
 已经有了一个imutils库,但是这个imutils也不能完全满足我的需求,所以就整了一个imutils2
 
+# 安装
+```
+pip install imutils2
+
+# or install with opencv
+pip install imutils2[opencv]
+```
+
 # 常用函数
 - imread 读取或转化图像为opencv格式
 - pil2cv Pillow转Opencv格式
