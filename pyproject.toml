@@ -5,6 +5,7 @@ description = "image utils"
 authors = ["Sully <codeskyblue@gmail.com>"]
 license = "MIT"
 readme = "README.md"
+homepage = "https://github.com/codeskyblue/imutils2"
 
 [tool.poetry.dependencies]
 python = "^3.8"
