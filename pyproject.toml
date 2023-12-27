@@ -18,6 +18,7 @@ opencv-python = {version = "*", extras = ["opencv"]}
 pytest = "^7.2.0"
 pytest-cov = "^2"
 pytest-httpserver = "^1.0.8"
+opencv-python = "^4.8.1.78"
 
 [tool.poetry-dynamic-versioning] # 根据tag来动态配置版本号
 enable = true
